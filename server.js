@@ -9,10 +9,11 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/stock_crypto_app', {
+mongoose.connect('mongodb+srv://maxdickinson17:CashMoney@cluster0.z1dxmwi.mongodb.net/stock_crypto_app?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
 
 // Import routes
 const usersRoute = require('./routes/users');
@@ -25,3 +26,4 @@ const port = process.env.PORT || 5001;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
