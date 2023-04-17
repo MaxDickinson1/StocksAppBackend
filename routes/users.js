@@ -6,6 +6,7 @@ const User = require('../models/User');
 const authMiddleware = require('../middlewares/auth');
 
 router.post('/register', async (req, res) => {
+  console.log('Inside /register endpoint');
   const { username, password } = req.body;
 
   const userExists = await User.findOne({ username });
@@ -22,17 +23,19 @@ router.post('/register', async (req, res) => {
     password: hashedPassword,
     favorites: [],
   });
-  
 
   try {
     await newUser.save();
+    console.log('User registered');
     res.status(201).json('User registered');
   } catch (error) {
+    console.error('Error registering user:', error.message);
     res.status(500).json('Error registering user');
   }
 });
 
 router.post('/login', async (req, res) => {
+  console.log('Inside /login endpoint');
   const { username, password } = req.body;
 
   const user = await User.findOne({ username });
@@ -47,39 +50,47 @@ router.post('/login', async (req, res) => {
     return res.status(400).json('Invalid username or password');
   }
 
-  const token = jwt.sign({ id: user._id }, '7ea4865169e22ca46869c82c83c62c4c9671ff28875bb6d31e404766b087cff3');
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+  console.log('User logged in');
   res.status(200).json({ token });
 });
 
 router.get('/favorites', authMiddleware, async (req, res) => {
+  console.log('Inside /favorites endpoint');
   const userId = req.user.id;
 
   try {
     const user = await User.findById(userId);
+    console.log('Favorites fetched');
     res.status(200).json(user.favorites);
   } catch (error) {
+    console.error('Error fetching favorites:', error.message);
     res.status(500).json('Error fetching favorites');
   }
 });
 
 router.put('/:id/favorites', async (req, res) => {
-    try {
-      const user = await User.findByIdAndUpdate(
-        req.params.id,
-        { $push: { favorites: req.body } },
-        { new: true }
-      );
-  
-      if (!user) {
-        return res.status(404).json('User not found');
-      }
-  
-      res.json(user);
-    } catch (error) {
-      res.status(500).json('An error occurred. Please try again.');
+  console.log('Inside /favorites endpoint');
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { $push: { favorites: req.body } },
+      { new: true }
+    );
+
+    if (!user) {
+      console.error('User not found');
+      return res.status(404).json('User not found');
     }
-  });
-  
+
+    console.log('Favorites updated');
+    res.json(user);
+  } catch (error) {
+    console.error('Error updating favorites:', error.message);
+    res.status(500).json('An error occurred. Please try again.');
+  }
+});
 
 module.exports = router;
+
 
