@@ -31,6 +31,11 @@ const usersRoute = require('./routes/users');
 // Use routes
 app.use('/users', usersRoute);
 
+app.use((req, res, next) => {
+    res.status(404).send('Page not found');
+  });
+
+
 // Start the server
 const port = process.env.PORT || 5001;
 app.listen(port, () => {

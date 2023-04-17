@@ -20,8 +20,9 @@ router.post('/register', async (req, res) => {
   const newUser = new User({
     username,
     password: hashedPassword,
-    favorites: { stocks: [], cryptocurrencies: [] },
+    favorites: [],
   });
+  
 
   try {
     await newUser.save();
