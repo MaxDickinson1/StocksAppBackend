@@ -69,7 +69,7 @@ router.get('/favorites', authMiddleware, async (req, res) => {
   }
 });
 
-router.put('/:id/favorites', async (req, res) => {
+router.put('/user/:id/favorites', async (req, res) => {
   console.log('Inside /favorites endpoint');
   try {
     const user = await User.findByIdAndUpdate(
@@ -91,6 +91,23 @@ router.put('/:id/favorites', async (req, res) => {
   }
 });
 
+router.get('/users/:id/favorites', async (req, res) => {
+  console.log('Inside /favorites endpoint');
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      console.error('User not found');
+      return res.status(404).json('User not found');
+    }
+    console.log('Favorites fetched');
+    res.status(200).json(user.favorites);
+  } catch (error) {
+    console.error('Error fetching favorites:', error.message);
+    res.status(500).json('Error fetching favorites');
+}
+});
+
 module.exports = router;
+
 
 
