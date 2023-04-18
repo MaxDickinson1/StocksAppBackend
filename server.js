@@ -5,20 +5,14 @@ require('dotenv').config();
 
 const app = express();
 
-// Middleware
-app.use(cors({
-  origin: 'https://stately-salmiakki-6c7124.netlify.app'
-}));
+// Allow requests only from specified origin
+const corsOptions = {
+  origin: 'https://stately-salmiakki-6c7124.netlify.app',
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 
-  
 app.use(express.json());
-
-// Add CORS headers
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://main--stately-salmiakki-6c7124.netlify.app');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
