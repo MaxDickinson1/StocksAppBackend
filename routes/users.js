@@ -52,6 +52,10 @@ router.post('/login', async (req, res) => {
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
   console.log('User logged in');
+  
+  // Set the JWT token as a cookie with the name "token"
+  res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
+  
   res.status(200).json({ token });
 });
 
@@ -104,10 +108,19 @@ router.get('/users/:id/favorites', async (req, res) => {
   } catch (error) {
     console.error('Error fetching favorites:', error.message);
     res.status(500).json('Error fetching favorites');
-}
-});
-
-module.exports = router;
+  }
+  });
+  
+  router.post('/logout', async (req, res) => {
+  console.log('Inside /logout endpoint');
+  
+  // Clear the JWT token cookie
+  res.clearCookie('token');
+  
+  res.status(200).json('User logged out');
+  });
+  
+  module.exports = router;
 
 
 

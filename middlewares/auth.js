@@ -3,8 +3,8 @@ const User = require('../models/User');
 
 const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.header('Authorization').replace('Bearer ', '');
-    
+    const token = req.cookies.token;
+
     if (!token) {
       throw new Error('Access denied. No token provided.');
     }
@@ -25,3 +25,4 @@ const authMiddleware = async (req, res, next) => {
 };
 
 module.exports = authMiddleware;
+
