@@ -112,6 +112,32 @@ router.get('/users/:id/favorites', async (req, res) => {
     res.status(500).json('Error fetching favorites');
   }
   });
+
+  router.post('/users/:id/favorites/add', async (req, res) => {
+    console.log('Inside /favorites/add endpoint');
+    const { id } = req.params;
+    const { coinId, coinName } = req.body;
+  
+    try {
+      const user = await User.findByIdAndUpdate(
+        id,
+        { $addToSet: { favorites: { id: coinId, name: coinName } } },
+        { new: true }
+      );
+  
+      if (!user) {
+        console.error('User not found');
+        return res.status(404).json('User not found');
+      }
+  
+      console.log('Favorite added');
+      res.status(200).json('Favorite added');
+    } catch (error) {
+      console.error('Error adding favorite:', error.message);
+      res.status(500).json('An error occurred. Please try again.');
+    }
+  });
+  
   
   router.post('/logout', async (req, res) => {
   console.log('Inside /logout endpoint');
