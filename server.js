@@ -5,10 +5,14 @@ require('dotenv').config();
 
 const app = express();
 
+const corsOptions = {
+  origin: 'https://stately-salmiakki-6c7124.netlify.app',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
 
-app.use(cors({
-  origin: 'https://stately-salmiakki-6c7124.netlify.app'
-}));
+app.use(cors(corsOptions));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
@@ -33,3 +37,4 @@ const port = process.env.PORT || 5001;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
