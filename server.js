@@ -7,8 +7,9 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: 'https://main--stately-salmiakki-6c7124.netlify.app'
+  origin: 'https://stately-salmiakki-6c7124.netlify.app'
 }));
+
   
 app.use(express.json());
 
