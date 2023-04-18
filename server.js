@@ -7,6 +7,10 @@ const app = express();
 
 const cors = require('cors');
 
+// Allow requests from any origin
+app.use(cors());
+
+
 
 // Allow requests from a specific domain
 const allowedOrigins = ['https://stately-salmiakki-6c7124.netlify.app'];
