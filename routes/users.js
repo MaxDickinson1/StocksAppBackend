@@ -6,12 +6,6 @@ const User = require('../models/User');
 const authMiddleware = require('../middlewares/auth');
 
 
-// Add CORS headers
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://stately-salmiakki-6c7124.netlify.app');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
 
 router.post('/register', async (req, res) => {
   console.log('Inside /register endpoint');

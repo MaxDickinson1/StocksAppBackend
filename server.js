@@ -3,13 +3,12 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
+const app = express();
 
 
-const cors = require('cors');
-
-// Allow requests from any origin
-app.use(cors());
-
+app.use(cors({
+  origin: 'https://stately-salmiakki-6c7124.netlify.app'
+}));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
@@ -34,5 +33,3 @@ const port = process.env.PORT || 5001;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
-
