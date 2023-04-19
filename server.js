@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Connect to MongoDB
-const mongoURI = process.env.MONGO_URI;
+const mongoURI = process.env.MONGODB_URI;
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const connection = mongoose.connection;
