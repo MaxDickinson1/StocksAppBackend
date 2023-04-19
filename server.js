@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 const app = express();
@@ -15,12 +16,14 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(express.json());
-
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 });
 
 const connection = mongoose.connection;
@@ -30,14 +33,15 @@ connection.once('open', () => {
 });
 
 // Import routes
-const usersRoute = require('./routes/users');
+const userRoutes = require('./routes/users'); 
 
 // Use routes
-app.use('/users', usersRoute);
+app.use(userRoutes);
 
 // Start the server
 const port = process.env.PORT || 5001;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
 
