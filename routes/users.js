@@ -5,10 +5,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const authMiddleware = require('../middlewares/auth');
 
-
-
-router.post('/api/users/register', async (req, res) => {
-  console.log('Inside /register endpoint');
+router.post('/register', async (req, res) => {
   const { username, password } = req.body;
 
   const userExists = await User.findOne({ username });
@@ -28,7 +25,6 @@ router.post('/api/users/register', async (req, res) => {
 
   try {
     await newUser.save();
-    console.log('User registered');
     res.status(201).json('User registered');
   } catch (error) {
     console.error('Error registering user:', error.message);
@@ -36,8 +32,7 @@ router.post('/api/users/register', async (req, res) => {
   }
 });
 
-router.post('/api/users/login', async (req, res) => {
-  console.log('Inside /login endpoint');
+router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   const user = await User.findOne({ username });
@@ -53,7 +48,6 @@ router.post('/api/users/login', async (req, res) => {
   }
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  console.log('User logged in');
   
   // Set the JWT token as a cookie with the name "token"
   res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
@@ -62,12 +56,10 @@ router.post('/api/users/login', async (req, res) => {
 });
 
 router.get('/favorites', authMiddleware, async (req, res) => {
-  console.log('Inside /favorites endpoint');
   const userId = req.user.id;
 
   try {
     const user = await User.findById(userId);
-    console.log('Favorites fetched');
     res.status(200).json(user.favorites);
   } catch (error) {
     console.error('Error fetching favorites:', error.message);
@@ -76,7 +68,6 @@ router.get('/favorites', authMiddleware, async (req, res) => {
 });
 
 router.put('/user/:id/favorites', async (req, res) => {
-  console.log('Inside /favorites endpoint');
   try {
     const user = await User.findByIdAndUpdate(
       req.params.id,
@@ -85,11 +76,9 @@ router.put('/user/:id/favorites', async (req, res) => {
     );
 
     if (!user) {
-      console.error('User not found');
       return res.status(404).json('User not found');
     }
 
-    console.log('Favorites updated');
     res.json(user);
   } catch (error) {
     console.error('Error updating favorites:', error.message);
@@ -97,58 +86,49 @@ router.put('/user/:id/favorites', async (req, res) => {
   }
 });
 
-router.get('/users/:id/favorites', async (req, res) => {
-  console.log('Inside /favorites endpoint');
+router.get('/:id/favorites', async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
-      console.error('User not found');
       return res.status(404).json('User not found');
     }
-    console.log('Favorites fetched');
     res.status(200).json(user.favorites);
   } catch (error) {
     console.error('Error fetching favorites:', error.message);
     res.status(500).json('Error fetching favorites');
   }
-  });
+});
 
-  router.post('/users/:id/favorites/add', async (req, res) => {
-    console.log('Inside /favorites/add endpoint');
-    const { id } = req.params;
-    const { coinId, coinName } = req.body;
-  
-    try {
-      const user = await User.findByIdAndUpdate(
-        id,
-        { $addToSet: { favorites: { id: coinId, name: coinName } } },
-        { new: true }
-      );
-  
-      if (!user) {
-        console.error('User not found');
-        return res.status(404).json('User not found');
-      }
-  
-      console.log('Favorite added');
-      res.status(200).json('Favorite added');
-    } catch (error) {
-      console.error('Error adding favorite:', error.message);
-      res.status(500).json('An error occurred. Please try again.');
+router.post('/:id/favorites/add', async (req, res) => {
+  const { id } = req.params;
+  const { coinId, coinName } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      id,
+      { $addToSet: { favorites: { id: coinId, name: coinName } } },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json('User not found');
     }
-  });
-  
-  
-  router.post('/logout', async (req, res) => {
-  console.log('Inside /logout endpoint');
-  
-  // Clear the JWT token cookie
-  res.clearCookie('token');
-  
-  res.status(200).json('User logged out');
-  });
-  
-  module.exports = router;
+    res.status(200).json('Favorite added');
+  } catch (error) {
+    console.error('Error adding favorite:', error.message);
+    res.status(500).json('An error occurred. Please try again.');
+    }
+    });
+    
+    router.post('/logout', async (req, res) => {
+    // Clear the JWT token cookie
+    res.clearCookie('token');
+    
+    res.status(200).json('User logged out');
+    });
+    
+    module.exports = router;
+
 
 
 

@@ -36,7 +36,7 @@ connection.once('open', () => {
 const userRoutes = require('./routes/users'); 
 
 // Use routes
-app.use(userRoutes);
+app.use('/api/users', userRoutes); 
 
 // Start the server
 const port = process.env.PORT || 5001;
