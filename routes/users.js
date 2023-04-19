@@ -7,7 +7,7 @@ const authMiddleware = require('../middlewares/auth');
 
 
 
-router.post('/register', async (req, res) => {
+router.post('/api/users/register', async (req, res) => {
   console.log('Inside /register endpoint');
   const { username, password } = req.body;
 
@@ -36,7 +36,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/api/users/login', async (req, res) => {
   console.log('Inside /login endpoint');
   const { username, password } = req.body;
 
