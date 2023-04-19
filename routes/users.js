@@ -119,6 +119,16 @@ router.post('/:id/favorites/add', async (req, res) => {
     res.status(500).json('An error occurred. Please try again.');
     }
     });
+
+
+router.get('/users/check-logged-in', (req, res) => {
+  // Check if user is logged in
+  if (req.user) {
+    res.status(200).json({ isLoggedIn: true });
+  } else {
+    res.status(200).json({ isLoggedIn: false });
+  }
+});
     
     router.post('/logout', async (req, res) => {
     // Clear the JWT token cookie
