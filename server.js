@@ -7,11 +7,12 @@ require('dotenv').config();
 const app = express();
 
 const corsOptions = {
-  origin: 'https://stately-salmiakki-6c7124.netlify.app',
+  origin: '*', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
+
 
 app.use(cors(corsOptions));
 
