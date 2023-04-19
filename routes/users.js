@@ -55,17 +55,17 @@ router.post('/login', async (req, res) => {
   res.status(200).json({ token });
 });
 
-router.get('/favorites', authMiddleware, async (req, res) => {
-  const userId = req.user.id;
+// router.get('/favorites', authMiddleware, async (req, res) => {
+//   const userId = req.user.id;
 
-  try {
-    const user = await User.findById(userId);
-    res.status(200).json(user.favorites);
-  } catch (error) {
-    console.error('Error fetching favorites:', error.message);
-    res.status(500).json('Error fetching favorites');
-  }
-});
+//   try {
+//     const user = await User.findById(userId);
+//     res.status(200).json(user.favorites);
+//   } catch (error) {
+//     console.error('Error fetching favorites:', error.message);
+//     res.status(500).json('Error fetching favorites');
+//   }
+// });
 
 router.put('/:id/favorites', authMiddleware, async (req, res) => {
   try {
@@ -101,21 +101,57 @@ router.get('/:id/favorites', authMiddleware, async (req, res) => {
 
 router.post('/:id/favorites/add', authMiddleware, async (req, res) => {
   const { id } = req.params;
-  const { coinId, coinName } = req.body;
+  const { coinId, coinName, coinSymbol, coinImage, coinCurrentPrice, coinDescriptionEn } = req.body;
+
+  console.log('Request body:', req.body); // Log the request body
 
   try {
     const user = await User.findByIdAndUpdate(
       id,
-      { $addToSet: { favorites: { id: coinId, name: coinName } } },
+      {
+        $addToSet: {
+          favorites: {
+            id: coinId,
+            name: coinName,
+            symbol: coinSymbol,
+            image: coinImage,
+            current_price: coinCurrentPrice,
+            description: { en: coinDescriptionEn },
+          },
+        },
+      },
       { new: true }
     );
 
     if (!user) {
       return res.status(404).json('User not found');
     }
-    res.status(200).json('Favorite added');
+    res.status(200).json(user.favorites.find(favorite => favorite.id === coinId));
   } catch (error) {
     console.error('Error adding favorite:', error.message);
+    console.error(error); // Log the entire error object
+    res.status(500).json('An error occurred. Please try again.');
+  }
+});
+
+
+
+
+router.delete('/:id/favorites/:favoriteId', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { $pull: { favorites: { _id: req.params.favoriteId } } },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json('User not found');
+    }
+
+    res.status(200).json('Favorite deleted');
+  } catch (error) {
+    console.error('Error deleting favorite:', error.message);
     res.status(500).json('An error occurred. Please try again.');
   }
 });

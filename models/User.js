@@ -13,18 +13,23 @@ const UserSchema = new Schema({
   },
   favorites: [
     {
-      type: {
-        type: String,
-        enum: ['stock', 'crypto'],
-        required: true,
-      },
-      symbol: {
+      id: {
         type: String,
         required: true,
       },
-      name: String,
+      name: {
+        type: String,
+        required: true,
+      },
+      symbol: String,
+      image: String,
+      current_price: Number,
+      description: {
+        en: String,
+      },
     },
   ],
+  
   
   
 });
