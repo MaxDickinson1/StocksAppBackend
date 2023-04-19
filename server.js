@@ -21,11 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-});
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+
 
 const connection = mongoose.connection;
 connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
