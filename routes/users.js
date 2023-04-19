@@ -48,10 +48,10 @@ router.post('/login', async (req, res) => {
   }
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  
+
   // Set the JWT token as a cookie with the name "token"
   res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
-  
+
   res.status(200).json({ token });
 });
 
@@ -67,7 +67,7 @@ router.get('/favorites', authMiddleware, async (req, res) => {
   }
 });
 
-router.put('/user/:id/favorites', async (req, res) => {
+router.put('/:id/favorites', authMiddleware, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.params.id,
@@ -86,7 +86,7 @@ router.put('/user/:id/favorites', async (req, res) => {
   }
 });
 
-router.get('/:id/favorites', async (req, res) => {
+router.get('/:id/favorites', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -99,7 +99,7 @@ router.get('/:id/favorites', async (req, res) => {
   }
 });
 
-router.post('/:id/favorites/add', async (req, res) => {
+router.post('/:id/favorites/add', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { coinId, coinName } = req.body;
 
@@ -117,28 +117,24 @@ router.post('/:id/favorites/add', async (req, res) => {
   } catch (error) {
     console.error('Error adding favorite:', error.message);
     res.status(500).json('An error occurred. Please try again.');
-    }
-    });
-
-
-router.get('/users/check-logged-in', (req, res) => {
-  // Check if user is logged in
-  if (req.user) {
-    res.status(200).json({ isLoggedIn: true });
-  } else {
-    res.status(200).json({ isLoggedIn: false });
   }
 });
-    
-    router.post('/logout', async (req, res) => {
-    // Clear the JWT token cookie
-    res.clearCookie('token');
-    
-    res.status(200).json('User logged out');
-    });
-    
-    module.exports = router;
 
+router.get('/check-logged-in', authMiddleware, (req, res) => {
+  // Check if user is logged in
+  if (req.user) {
+    res.status(200).json({ currentUser: req.user });
+  } else {
+    res.status(200).json({ currentUser: null });
+  }
+});
 
+router.post('/logout', async (req, res) => {
+  // Clear the JWT token cookie
+  res.clearCookie('token');
 
+  res.status(200).json('User logged out');
+});
+
+module.exports = router;
 
