@@ -3,7 +3,9 @@ const User = require('../models/User');
 
 const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+
+    
 
     if (!token) {
       throw new Error('Access denied. No token provided.');
