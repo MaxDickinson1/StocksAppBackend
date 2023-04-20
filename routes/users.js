@@ -103,36 +103,34 @@ router.post('/:id/favorites/add', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { coinId, coinName, coinSymbol, coinImage, coinCurrentPrice, coinDescriptionEn } = req.body;
 
-  console.log('Request body:', req.body); // Log the request body
+  console.log('Request body:', req.body); 
 
   try {
-    const user = await User.findByIdAndUpdate(
-      id,
-      {
-        $addToSet: {
-          favorites: {
-            id: coinId,
-            name: coinName,
-            symbol: coinSymbol,
-            image: coinImage,
-            current_price: coinCurrentPrice,
-            description: { en: coinDescriptionEn },
-          },
-        },
-      },
-      { new: true }
-    );
+    const user = await User.findById(id);
 
     if (!user) {
       return res.status(404).json('User not found');
     }
+
+    user.favorites.push({
+      id: coinId,
+      name: coinName,
+      symbol: coinSymbol,
+      image: coinImage,
+      current_price: coinCurrentPrice,
+      description: { en: coinDescriptionEn },
+    });
+
+    await user.save();
+
     res.status(200).json(user.favorites.find(favorite => favorite.id === coinId));
   } catch (error) {
     console.error('Error adding favorite:', error.message);
-    console.error(error); // Log the entire error object
+    console.error(error); 
     res.status(500).json('An error occurred. Please try again.');
   }
 });
+
 
 
 
